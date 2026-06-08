@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Список дел</title>
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@3/dist/vuetify.min.js"></script>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/vuetify@3/dist/vuetify.min.css"
+        rel="stylesheet"
+    >
+</head>
+<body>
+
+<div id="app">
+    <v-app>
+        <v-container>
+
+            <v-card class="pa-4">
+                <v-card-title class="d-flex justify-space-between">
+
+                    {{ header }}
+
+                    <v-btn
+                        v-if="editing"
+                        color="error"
+                        @click="doEdit(false)"
+                    >
+                        Отменить
+                    </v-btn>
+
+                    <v-btn
+                        v-else
+                        color="primary"
+                        @click="doEdit(true)"
+                    >
+                        Добавить дело
+                    </v-btn>
+
+                </v-card-title>
+
+                <v-card-text>
+
+                    <div v-if="editing">
+
+                        <v-text-field
+                            v-model="newItem"
+                            label="Добавьте новое дело"
+                            counter="200"
+                            maxlength="200"
+                            @keyup.enter="saveItem"
+                        ></v-text-field>
+
+                        <v-btn
+                            color="success"
+                            :disabled="newItem.length === 0"
+                            @click="saveItem"
+                        >
+                            Сохранить дело
+                        </v-btn>
+
+                    </div>
+
+                    <v-list>
+                        <v-list-item
+                            v-for="item in items"
+                            :key="item.id"
+                            :title="item.label"
+                        >
+                        </v-list-item>
+                    </v-list>
+
+                </v-card-text>
+            </v-card>
+
+        </v-container>
+    </v-app>
+</div>
+
+<script>
+const { createApp } = Vue
+const { createVuetify } = Vuetify
+
+const vuetify = createVuetify()
+
+createApp({
+    data() {
+        return {
+            header: 'Список дел',
+            newItem: '',
+            editing: false,
+            items: []
+        }
+    },
+
+    computed: {
+        charCounter() {
+            return this.newItem.length
+        }
+    },
+
+    methods: {
+        saveItem() {
+            this.items.push({
+                id: this.items.length + 1,
+                label: this.newItem
+            })
+
+            this.newItem = ''
+        },
+
+        doEdit(editing) {
+            this.editing = editing
+            this.newItem = ''
+        }
+    }
+})
+.use(vuetify)
+.mount('#app')
+</script>
+
+</body>
+</html>
